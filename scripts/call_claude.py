@@ -36,6 +36,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-format", choices=["text", "json", "stream-json"], default="text", help="Claude print-mode output format.")
     parser.add_argument("--bare", action="store_true", help="Use Claude CLI bare mode.")
     parser.add_argument("--timeout", type=int, default=180, help="Timeout in seconds.")
+    parser.add_argument("--stdin-threshold", type=int, default=8000, help="Send prompts longer than this many characters over stdin.")
     return parser.parse_args()
 
 
@@ -46,10 +47,16 @@ def main() -> int:
         sys.stderr.write("Claude CLI not found on PATH.\n")
         return 127
 
+    prompt = read_prompt(args)
+    use_stdin_prompt = len(prompt) > args.stdin_threshold
+
     cmd = [claude]
     if args.bare:
         cmd.append("--bare")
-    cmd.extend(["-p", read_prompt(args), "--output-format", args.output_format, "--max-turns", str(args.max_turns)])
+    if use_stdin_prompt:
+        cmd.extend(["-p", "Use the complete prompt provided on stdin.", "--output-format", args.output_format, "--max-turns", str(args.max_turns)])
+    else:
+        cmd.extend(["-p", prompt, "--output-format", args.output_format, "--max-turns", str(args.max_turns)])
     if args.model:
         cmd.extend(["--model", args.model])
     if args.system:
@@ -59,6 +66,7 @@ def main() -> int:
         cmd,
         check=False,
         text=True,
+        input=prompt if use_stdin_prompt else None,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         timeout=args.timeout,
