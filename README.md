@@ -1,8 +1,8 @@
 # Call Claude
 
-A Codex skill for calling an authenticated local Claude CLI as a bounded external reviewer, critic, or judge.
+A Codex skill for calling an authenticated local Claude CLI as a bounded external-review helper.
 
-Codex remains responsible for evidence hygiene and the final decision. Claude is used as a second opinion: useful for alternate framing, missed risks, critique, taste, design judgment, writing quality, product nuance, or judge-of-judge workflows.
+This skill is the adapter layer. It gets a prompt or evidence bundle to Claude and returns Claude's output. The calling workflow remains responsible for evidence hygiene, verdict synthesis, and any judge-of-judge decision.
 
 Use Claude especially for:
 
@@ -34,6 +34,8 @@ Use $call-claude to ask Claude for an independent review of this design, product
 - Python 3 for `scripts/call_claude.py`
 
 This workflow does not require Anthropic API keys in Codex.
+
+For large evidence bundles, pass a file with `--prompt-file` or pipe content into `scripts/call_claude.py`; the helper will switch large prompts to stdin to avoid command-line argument limits.
 
 ## Files
 

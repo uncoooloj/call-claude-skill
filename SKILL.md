@@ -1,17 +1,23 @@
 ---
 name: call-claude
-description: Invoke the authenticated Claude CLI as an external reviewer, judge, critic, second-opinion model, or cross-model evaluator from Codex. Use when the user asks to call Claude, ask Claude for an independent angle, compare Codex and Claude opinions, run a judge-of-judge workflow, or obtain a Claude CLI review of plans, documents, diffs, evidence bundles, or decisions. Prefer Claude for taste-heavy, design-heavy, writing-heavy, product-judgment, UX, brand, narrative, naming, aesthetic, ambiguity, and human-preference work where qualitative judgment matters as much as formal correctness.
+description: Invoke the authenticated Claude CLI as a low-level external-review adapter from Codex. Use when the user asks to call Claude, send an evidence bundle to Claude, ask Claude for an independent angle, or obtain a Claude CLI review of plans, documents, diffs, evidence bundles, or decisions. For full verdict synthesis or judge-of-judge workflows, use this only as the terminal invocation helper and let the calling workflow make the final decision.
 ---
 
 # Call Claude
 
 ## Overview
 
-Use this skill to call the local authenticated Claude CLI for a bounded external opinion while Codex remains responsible for evidence hygiene, tool verification, and the final decision. Prefer this when Claude's different model behavior may reveal an alternate framing, missed risk, stronger critique, or second-opinion judgment.
+Use this skill to call the local authenticated Claude CLI for a bounded external opinion. This is a transport/helper skill: it gets a prompt or evidence bundle to Claude and returns Claude's output. The calling workflow remains responsible for evidence hygiene, tool verification, verdict synthesis, and any judge-of-judge decision.
 
 Claude is especially useful when the question has taste, design, narrative, tone, user empathy, or product judgment at its center. Use Claude for the human-readability and aesthetic side of a decision; use direct tool evidence and Codex's own verification for executable truth.
 
 Read `references/official-claude-cli.md` when updating the invocation method or diagnosing Claude CLI behavior.
+
+## Boundary
+
+Use `call-claude` for terminal invocation only. Do not let it compete with broader decision workflows such as `judge-decision`.
+
+This skill should not decide whether Claude is correct. After it returns Claude's response, the caller should decide what changed, what was unsupported, and what still needs tool verification.
 
 ## When To Use Claude
 
@@ -32,10 +38,10 @@ Before trying to call Claude, check that the CLI is available:
 
 ```bash
 which claude
-claude auth status --text
+claude --version
 ```
 
-Do not ask for Anthropic API keys for this workflow. This skill assumes the CLI is installed and already authenticated. If `claude` is not on PATH, say that Claude CLI access is unavailable in the current terminal and continue only if the user accepts a simulated external-review pass.
+Do not ask for Anthropic API keys for this workflow. This skill assumes the CLI is installed and already authenticated. If `claude` is not on PATH, say that Claude CLI access is unavailable in the current terminal. Do not simulate Claude's response.
 
 ## Calling Claude
 
@@ -56,6 +62,8 @@ git diff main | python3 scripts/call_claude.py --system "You are a code reviewer
 ```
 
 When running inside a sandbox, request escalation if the Claude CLI call fails due network, authentication, or terminal-boundary restrictions.
+
+For large evidence bundles, prefer `--prompt-file` or piped stdin. The helper can send large prompts to Claude through stdin to avoid brittle command-line argument limits.
 
 ## Prompt Shape
 
