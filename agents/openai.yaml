@@ -1,4 +1,4 @@
 interface:
   display_name: "Call Claude"
-  short_description: "Invoke Claude as an external reviewer"
-  default_prompt: "Use $call-claude to ask Claude for an independent review of this evidence bundle."
+  short_description: "Ask Claude for taste or critique"
+  default_prompt: "Use $call-claude to ask Claude for an independent review of this design, product judgment, or evidence bundle."
