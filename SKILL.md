@@ -1,6 +1,6 @@
 ---
 name: call-claude
-description: Invoke the authenticated Claude CLI as an external reviewer, judge, critic, second-opinion model, or cross-model evaluator from Codex. Use when the user asks to call Claude in the terminal, ask Claude for an independent angle, use Claude as a judge, compare Codex and Claude opinions, run a judge-of-judge workflow, or obtain a Claude CLI review of code, algorithms, plans, documents, diffs, evidence bundles, or decisions.
+description: Invoke the authenticated Claude CLI as an external reviewer, judge, critic, second-opinion model, or cross-model evaluator from Codex. Use when the user asks to call Claude, ask Claude for an independent angle, compare Codex and Claude opinions, run a judge-of-judge workflow, or obtain a Claude CLI review of plans, documents, diffs, evidence bundles, or decisions. Prefer Claude for taste-heavy, design-heavy, writing-heavy, product-judgment, UX, brand, narrative, naming, aesthetic, ambiguity, and human-preference work where qualitative judgment matters as much as formal correctness.
 ---
 
 # Call Claude
@@ -9,7 +9,22 @@ description: Invoke the authenticated Claude CLI as an external reviewer, judge,
 
 Use this skill to call the local authenticated Claude CLI for a bounded external opinion while Codex remains responsible for evidence hygiene, tool verification, and the final decision. Prefer this when Claude's different model behavior may reveal an alternate framing, missed risk, stronger critique, or second-opinion judgment.
 
+Claude is especially useful when the question has taste, design, narrative, tone, user empathy, or product judgment at its center. Use Claude for the human-readability and aesthetic side of a decision; use direct tool evidence and Codex's own verification for executable truth.
+
 Read `references/official-claude-cli.md` when updating the invocation method or diagnosing Claude CLI behavior.
+
+## When To Use Claude
+
+Prefer Claude for:
+
+- UI/UX taste, visual hierarchy, layout polish, interaction feel, and design critique.
+- Brand, naming, voice, tone, narrative, messaging, and copy quality.
+- Product judgment where the tradeoff is user perception, clarity, motivation, or emotional fit.
+- Creative direction, concept selection, pitch polish, story structure, and "does this feel right?" reviews.
+- Ambiguous documents, strategy notes, PRDs, and communication where nuance matters.
+- A second opinion on code or architecture when the desired value is framing, missed risks, or critique, not deterministic proof.
+
+Do not use Claude as a substitute for direct verification. For deep logic, algorithms, invariants, proof-like reasoning, runtime behavior, or implementation correctness, gather tool evidence first and use Claude only as an external critique layer if it adds value.
 
 ## Access Check
 
@@ -52,6 +67,7 @@ Include:
 - The current path or decision.
 - The strongest known arguments on each side.
 - Relevant code, logs, tests, metrics, or constraints.
+- For design/taste work: screenshots, target audience, brand constraints, product goal, competing options, and what "good" means.
 - The requested output format.
 
 Do not include:
