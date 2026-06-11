@@ -34,14 +34,15 @@ Do not use Claude as a substitute for direct verification. For deep logic, algor
 
 ## Access Check
 
-Before trying to call Claude, check that the CLI is available:
+Before trying to call Claude, check that the helper can resolve a usable CLI:
 
 ```bash
-which claude
-claude --version
+python3 scripts/call_claude.py --diagnose
 ```
 
-Do not ask for Anthropic API keys for this workflow. This skill assumes the CLI is installed and already authenticated. If `claude` is not on PATH, say that Claude CLI access is unavailable in the current terminal. Do not simulate Claude's response.
+Do not ask for Anthropic API keys for this workflow. This skill assumes the CLI is installed and already authenticated. If the resolver cannot find a usable Claude CLI, report its diagnostics. Do not simulate Claude's response.
+
+The helper validates candidates with `--version` before use. This matters when `claude` on PATH is only a wrapper, such as a cmux wrapper, that cannot find the real binary. The resolver checks explicit paths first, then PATH, then known app bundle locations such as Conductor and cmux.
 
 ## Calling Claude
 
@@ -61,7 +62,9 @@ python3 scripts/call_claude.py --prompt-file /path/to/evidence.md --system "You 
 git diff main | python3 scripts/call_claude.py --system "You are a code reviewer. Focus on correctness and missed edge cases."
 ```
 
-When running inside a sandbox, request escalation if the Claude CLI call fails due network, authentication, or terminal-boundary restrictions.
+Use `--claude-bin /path/to/claude` or `CLAUDE_BIN=/path/to/claude` when the user has a known good binary that is not on PATH.
+
+When running inside a sandbox, request escalation if the Claude CLI call fails due network, authentication, terminal-boundary restrictions, or home-directory writes such as `~/.claude` or `~/.claude.json`.
 
 For large evidence bundles, prefer `--prompt-file` or piped stdin. The helper can send large prompts to Claude through stdin to avoid brittle command-line argument limits.
 

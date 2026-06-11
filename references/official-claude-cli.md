@@ -28,3 +28,15 @@ Useful flags from the official CLI docs:
 - `--append-system-prompt`: add system prompt text.
 
 Use normal print mode by default because this workflow assumes the local CLI is already installed and authenticated. Use `--bare` only when the caller explicitly wants reproducible scripted behavior that skips local hooks, skills, plugins, and MCP auto-discovery.
+
+## Local Wrapper Notes
+
+Some desktop environments put a wrapper named `claude` on PATH. For example, a cmux wrapper may inject hooks and then search PATH for the real Claude binary while skipping its own directory. If no real binary exists later on PATH, the wrapper can print `Error: claude not found in PATH` even though `which claude` succeeds.
+
+Use the skill helper's resolver instead of trusting `which`:
+
+```bash
+python3 scripts/call_claude.py --diagnose
+```
+
+If the authenticated CLI needs to write to `~/.claude`, `~/.claude.json`, or other user-home config files, Codex sandboxed runs may need escalation for the real call.
